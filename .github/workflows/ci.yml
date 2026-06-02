@@ -15,22 +15,20 @@ jobs: #define os trabalhos (jobs) que serão executados no workflow
   build: #nome do trabalho (job)
     runs-on: ubuntu-latest #especifica o ambiente de execução (runner) do trabalho
 
-  strategy: #define a estratégia de execução do trabalho (job)
-    matrix: #define uma matriz de variáveis para executar o job em diferentes ambientes
-      node-version: [14.x, 16.x] #especifica as versões do Node.js para testar
+    strategy: # CORRIGIDO: Indentado para dentro de 'build'
+      matrix: 
+        node-version: [18.x, 20.x] # Nota: Atualizei as versões pois 14 e 16 já estão descontinuadas
 
-  steps: #define os passos (steps) que serão executados no job
-    - uses: actions/checkout@v4 #passo para fazer checkout do código-fonte do repositório
+    steps: # CORRIGIDO: Indentado para dentro de 'build'
+      - uses: actions/checkout@v4 
 
-    - name: use Node.js #passo para configurar o ambiente Node.js
-      uses:
-        actions/setup-node@v4 #ação para configurar o ambiente Node.js (@v4)
-        #que representa a versão (tag) da action mais recente
-      with: #especifica os parâmetros para a ação de configuração do Node.js
-        node-version: "20.x" #especifica a versão do Node.js a ser usada (20.x)
+      - name: use Node.js 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: ${{ matrix.node-version }} # CORRIGIDO: Usando a variável da matriz em vez de travar na 20.x
 
-    - name: Install dependences #passo para instalar as dependências do projeto
-      run: npm run ci #comando para instalar as dependências do projeto usando npm
+      - name: Install dependencies 
+        run: npm ci # CORRIGIDO: 'npm ci' ou 'npm install' para instalar as dependências
 
-    - name: Run tests #passo para executar os testes do projeto
-      run: npm jest #comando para executar os testes do projeto npm
+      - name: Run tests 
+        run: npx jest
