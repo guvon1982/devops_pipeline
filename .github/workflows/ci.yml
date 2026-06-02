@@ -1,1 +1,36 @@
+name: CI - teste calculadora Node.js Jest #nome do workflow (pipeline)
 
+on: #eventos de gatilho que disparam o workflow (pipeline)
+  push: #evento que push para a branch main
+    branches: #especifica as branches que disparam o evento de push
+      - main #evento de push para a branch main
+  pull_request: #evento de pull request para as branches
+    branches:
+      - main
+      - developer
+      - fix
+  workflow_dispatch: #permite disparar o workflow manualmente
+
+jobs: #define os trabalhos (jobs) que serão executados no workflow
+  build: #nome do trabalho (job)
+    runs-on: ubuntu-latest #especifica o ambiente de execução (runner) do trabalho
+
+  strategy: #define a estratégia de execução do trabalho (job)
+    matrix: #define uma matriz de variáveis para executar o job em diferentes ambientes
+      node-version: [14.x, 16.x] #especifica as versões do Node.js para testar
+
+  steps: #define os passos (steps) que serão executados no job
+    - uses: actions/checkout@v4 #passo para fazer checkout do código-fonte do repositório
+
+    - name: use Node.js #passo para configurar o ambiente Node.js
+      uses:
+        actions/setup-node@v4 #ação para configurar o ambiente Node.js (@v4)
+        #que representa a versão (tag) da action mais recente
+      with: #especifica os parâmetros para a ação de configuração do Node.js
+        node-version: "20.x" #especifica a versão do Node.js a ser usada (20.x)
+
+    - name: Install dependences #passo para instalar as dependências do projeto
+      run: npm run ci #comando para instalar as dependências do projeto usando npm
+
+    - name: Run tests #passo para executar os testes do projeto
+      run: npm jest #comando para executar os testes do projeto npm
